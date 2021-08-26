@@ -703,7 +703,7 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                 self.pushButton_2.setEnabled(True)
                 try :
                     global ard
-                    ard = serial.Serial('COM4', 115200)
+                    ard = serial.Serial('COM3', 115200)
                 except :
                     pass
             else :
