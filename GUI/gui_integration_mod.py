@@ -251,10 +251,12 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                 if right_idx_1 > 10 and mode_global == 0:
                     mode_global = 1
                     print('mode 1')
+                    ui.label_6.setPixmap(QtGui.QPixmap("Image/gesture_ing.PNG"))
                     select_idx = 30
                 elif right_idx_1 < 10 and mode_global == 1:
                     mode_global = 0
                     print('mode 0')
+                    ui.label_6.setPixmap(QtGui.QPixmap("Image/gesture_before.PNG"))
 
                     select_idx = 30
             select_idx -= 1
