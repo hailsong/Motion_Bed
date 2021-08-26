@@ -451,7 +451,7 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                 cv2.putText(image, "FPS : %0.1f" % fps, (450, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, 1)
 
                 if det_duration > 60 :
-                    self.change_pixmap_signal.emit(cv2.cvtColor(cv2.imread('Image/wating_screen.png'), cv2.COLOR_BGR2RGB))
+                    self.change_pixmap_signal.emit(cv2.cvtColor(cv2.imread('Image/waiting_screen.png'), cv2.COLOR_BGR2RGB))
                 else :
                     self.change_pixmap_signal.emit(image)
 
@@ -464,7 +464,7 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
             except:
                 pass
                 # self.is_connect.emit(0)
-            self.change_pixmap_signal.emit(cv2.cvtColor(cv2.imread('Image/wating_screen_2.png'), cv2.COLOR_BGR2RGB))
+            self.change_pixmap_signal.emit(cv2.cvtColor(cv2.imread('Image/waiting_screen_2.png'), cv2.COLOR_BGR2RGB))
             hands.close()
             self.capture.release()
 
