@@ -1252,6 +1252,7 @@ def data_predict(p_list, maximum):
         model = keras.models.load_model(
             '../model_save/my_model_63_report.h5'
         )
+        print('Model Loaded')
     except:
         print('ML 모델 로딩 실패')
     while True:
