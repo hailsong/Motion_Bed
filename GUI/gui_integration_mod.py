@@ -61,6 +61,7 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
     try :
         ard = serial.Serial('COM3', 115200)
     except :
+        print('Error : No Arduino Signal')
         pass
 
     class Handmark():
