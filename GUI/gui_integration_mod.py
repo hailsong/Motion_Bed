@@ -416,7 +416,8 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                         # print(gesture_list)
 
                     elif mode_global == 0 :
-                        command_status == 2
+                        pass
+                        # command_status = 2
                 else:
                     select_idx = enter_mode.update_right(0, select_idx)
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)

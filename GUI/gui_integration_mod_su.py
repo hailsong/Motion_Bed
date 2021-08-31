@@ -60,7 +60,7 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
             self.Label.setText(_translate("Form", "로딩 중..."))
 
     try :
-        ard = serial.Serial('COM4', 115200)
+        ard = serial.Serial('COM3', 115200)
     except :
         pass
 
@@ -393,11 +393,11 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                     mark_p_list = []
                     size_list = []
                     left_or_right_list = []
-
+                    HM_list = []
                     for hand_landmarks in results.multi_hand_landmarks:  # hand_landmarks는 감지된 손의 갯수만큼의 원소 수를 가진 list 자료구조
                         mark_p = []
                         normalized_list = []
-                        HM_list = []
+
                         data_normalize(normalized_list, hand_landmarks)  # 여기서 나온 mark_p_list cv_gui_arduino.data_predict로 보내주기
                         size_list.append(get_distance(hand_landmarks.landmark[5], hand_landmarks.landmark[17]))
                         for i in range(21):
@@ -407,19 +407,29 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                         HM_list.append(mark_p)
 
                     for i in range(len(results.multi_hand_landmarks)):
+                        # print(left_or_right_list)
                         left_or_right_list.append(results.multi_handedness[i].classification[0].label)
                         mp_drawing.draw_landmarks(
                             image, results.multi_hand_landmarks[i], mp_hands.HAND_CONNECTIONS)
 
                     self.det_time = time.time()
+
                     target_idx = size_list.index(max(size_list))
-                    HM = HM_list[target_idx]
+
+                    # print(target_idx)
+                    # print('len :', len(HM_list))
+                    #
+                    # print(HM_list[target_idx])
+                    
+                    HM = Handmark(HM_list[target_idx])
                     # HM.predict_gesture(p_list, maximum)
-
-                    mp_drawing.draw_landmarks(
-                        image, results.multi_hand_landmarks[target_idx], mp_hands.HAND_CONNECTIONS)
+                    
+                    # mp_drawing.draw_landmarks(
+                    #     image, results.multi_hand_landmarks[target_idx], mp_hands.HAND_CONNECTIONS)
+                    
                     left_or_right = results.multi_handedness[target_idx].classification[0].label
-
+                    # print(left_or_right)
+                    
                     if HM.result == [1, 1, 1, 1, 1, 1] and len(left_or_right) == 5 and HM.z_orthogonality < -0.5:
                         select_idx = enter_mode.update_right(1, select_idx)
                     elif HM.result == [1, 1, 1, 1, 1, 1] and len(left_or_right) == 4 and HM.z_orthogonality > 0.5:
@@ -429,21 +439,32 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                             select_idx = enter_mode.update_right(0, select_idx)
                         elif len(left_or_right) == 4 :
                             select_idx = enter_mode.update_left(0, select_idx)
-
+                    
                     if left_or_right_status == 0 :
-                        rl_idx = left_or_right_list.index('Left')
-                    elif left_or_right_status == 1 :
-                        rl_idx = left_or_right_list.index('Right')
-                    else :
-                        rl_idx = target_idx
-                    # print(mode_global)
+                        if 'Left' in left_or_right_list :
+                            rl_idx = left_or_right_list.index('Left')
 
-                    HM = HM_list[rl_idx]
-                    HM.predict_gesture(p_list, maximum)
+                            HM = Handmark(HM_list[rl_idx])
+                            HM.predict_gesture(p_list, maximum)
+                            pred_max = HM.MAX
+                        else :
+                            pred_max = 3
+                    elif left_or_right_status == 1 :
+                        if 'Right' in left_or_right_list :
+                            rl_idx = left_or_right_list.index('Right')
+
+                            HM = Handmark(HM_list[rl_idx])
+                            HM.predict_gesture(p_list, maximum)
+                            pred_max = HM.MAX
+                        else :
+                            pred_max = 3
+                    else :
+                        pred_max = 3
+                    # print(mode_global)
 
                     if mode_global:
                         command_status = 3
-                        gesture_list.append(HM.MAX)
+                        gesture_list.append(pred_max)
                         gesture_list.pop(0)
                         idx_0 = 0
                         idx_11 = 0
@@ -466,11 +487,12 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                         # print(gesture_list)
 
                     elif mode_global == 0 :
-                        command_status == 2
+                        pass
+                        # command_status = 2
                 else:
                     select_idx = enter_mode.update_right(0, select_idx)
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
+                
                 if command_status == 0 :
                     cv2.putText(image, 'Increase', (30, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, 1)
                     try:
@@ -499,6 +521,7 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                 else :
                     pass
                     # self.is_connect.emit(1)
+
                 cv2.putText(image, "FPS : %0.1f" % fps, (450, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, 1)
 
                 if det_duration > 60 :
@@ -754,7 +777,7 @@ def cv_gui_arduino(p_list, maximum, p_list_2, maximum_2):
                 self.pushButton_2.setEnabled(True)
                 try :
                     global ard
-                    ard = serial.Serial('COM4', 115200)
+                    ard = serial.Serial('COM3', 115200)
                 except :
                     pass
             else :
